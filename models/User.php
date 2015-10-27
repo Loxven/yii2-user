@@ -16,6 +16,7 @@ use ReflectionClass;
  * @property string    $id
  * @property string    $role_id
  * @property integer   $status
+ * @property integer   $full_name
  * @property string    $email
  * @property string    $new_email
  * @property string    $username
@@ -88,17 +89,18 @@ class User extends ActiveRecord implements IdentityInterface
         // set initial rules
         $rules = [
             // general email and username rules
-            [['email', 'username'], 'string', 'max' => 255],
+            [['full_name'], 'required'],
+            [['email', 'username', 'full_name'], 'string', 'max' => 255],
             [['email', 'username'], 'unique'],
             [['email', 'username'], 'filter', 'filter' => 'trim'],
             [['email'], 'email'],
             [['username'], 'match', 'pattern' => '/^[A-Za-z0-9_]+$/u', 'message' => Yii::t('user', '{attribute} can contain only letters, numbers, and "_"')],
 
             // password rules
-            [['newPassword'], 'string', 'min' => 3],
+            [['newPassword'], 'string', 'min' => 6],
             [['newPassword'], 'filter', 'filter' => 'trim'],
-            [['newPassword'], 'required', 'on' => ['register', 'reset']],
-            [['newPasswordConfirm'], 'required', 'on' => ['reset']],
+            [['newPassword', 'newPasswordConfirm'], 'required', 'on' => ['register', 'reset']],
+            //[['newPasswordConfirm'], 'required', 'on' => ['reset']],
             [['newPasswordConfirm'], 'compare', 'compareAttribute' => 'newPassword', 'message' => Yii::t('user','Passwords do not match')],
 
             // account page
@@ -143,6 +145,7 @@ class User extends ActiveRecord implements IdentityInterface
             'id'          => Yii::t('user', 'ID'),
             'role_id'     => Yii::t('user', 'Role ID'),
             'status'      => Yii::t('user', 'Status'),
+            'full_name'   => Yii::t('user', 'Full Name'),
             'email'       => Yii::t('user', 'Email'),
             'new_email'   => Yii::t('user', 'New Email'),
             'username'    => Yii::t('user', 'Username'),
@@ -209,6 +212,12 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $role = Yii::$app->getModule("user")->model("Role");
         return $this->hasOne($role::className(), ['id' => 'role_id']);
+    }
+
+    public function getAvailableApp()
+    {
+        $availableApp = Yii::$app->getModule("user")->model("profile");
+        return $this->hasOne($availableApp::className(), ['available_app' => STATUS_UNAVAILABLE ]);
     }
 
     /**
@@ -449,7 +458,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         // define possible fields
         $possibleNames = [
-            "username",
+            //"username",
             "email",
             "id",
         ];

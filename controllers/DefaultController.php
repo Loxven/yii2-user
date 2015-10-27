@@ -49,6 +49,11 @@ class DefaultController extends Controller
         ];
     }
 
+    public function actions()
+    {
+        Yii::$app->layout = 'main-admin';
+    }
+
     /**
      * Display index - debug page, login page, or account page
      */
@@ -71,18 +76,12 @@ class DefaultController extends Controller
     {
         /** @var \amnah\yii2\user\models\forms\LoginForm $model */
 
+        Yii::$app->layout = 'main-login';
+
         // load post data and login
         $model = Yii::$app->getModule("user")->model("LoginForm");
         if ($model->load(Yii::$app->request->post()) && $model->login(Yii::$app->getModule("user")->loginDuration)) {
-
-            // check for a valid returnUrl (to prevent a weird login bug)
-            //   https://github.com/amnah/yii2-user/issues/115
-            $loginRedirect = Yii::$app->getModule("user")->loginRedirect;
-            $returnUrl = Yii::$app->user->getReturnUrl($loginRedirect);
-            if (strpos($returnUrl, "user/login") !== false) {
-                $returnUrl = null;
-            }
-            return $this->redirect($returnUrl);
+            return $this->goBack(Yii::$app->getModule("user")->loginRedirect);
         }
 
         // render
@@ -117,9 +116,13 @@ class DefaultController extends Controller
         /** @var \amnah\yii2\user\models\Profile $profile */
         /** @var \amnah\yii2\user\models\Role    $role */
 
+        Yii::$app->layout = 'main';
+
         // set up new user/profile objects
         $user    = Yii::$app->getModule("user")->model("User", ["scenario" => "register"]);
         $profile = Yii::$app->getModule("user")->model("Profile");
+
+        $profile->denomination_id = 1;
 
         // load post data
         $post = Yii::$app->request->post();
@@ -203,6 +206,8 @@ class DefaultController extends Controller
         /** @var \amnah\yii2\user\models\UserKey $userKey */
         /** @var \amnah\yii2\user\models\User $user */
 
+        Yii::$app->layout = 'main';
+
         // search for userKey
         $success = false;
         $userKey = Yii::$app->getModule("user")->model("UserKey");
@@ -278,6 +283,8 @@ class DefaultController extends Controller
     public function actionProfile()
     {
         /** @var \amnah\yii2\user\models\Profile $profile */
+
+        Yii::$app->layout = 'main-admin';
 
         // set up profile and load post data
         $profile = Yii::$app->user->identity->profile;

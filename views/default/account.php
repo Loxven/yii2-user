@@ -9,12 +9,10 @@ use yii\widgets\ActiveForm;
  * @var amnah\yii2\user\models\User $user
  */
 
-$this->title = Yii::t('user', 'Account');
+$this->title = Yii::t('user', 'Edit Account');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-default-account">
-
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <?php if ($flash = Yii::$app->session->getFlash("Account-success")): ?>
 
@@ -51,6 +49,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <hr/>
 
     <?php if (Yii::$app->getModule("user")->useEmail): ?>
+        <?= $form->field($user, 'full_name') ?>
+
         <?= $form->field($user, 'email') ?>
     <?php endif; ?>
 

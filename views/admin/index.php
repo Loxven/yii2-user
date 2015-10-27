@@ -28,7 +28,6 @@ $this->params['breadcrumbs'][] = $this->title;
         ]), ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
-    <?php \yii\widgets\Pjax::begin(); ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -55,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
             ],
             'email:email',
-            'profile.full_name',
+            'full_name',
             'create_time',
             // 'new_email:email',
             // 'username',
@@ -73,6 +72,5 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
-    <?php \yii\widgets\Pjax::end(); ?>
 
 </div>
